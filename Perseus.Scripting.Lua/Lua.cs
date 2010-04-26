@@ -49,7 +49,8 @@ namespace Perseus.Scripting.Lua {
                 this.RegisterFunction("perseus.io.dir.create", this._Lib, "IODirectoryCreate");
                 this.RegisterFunction("perseus.io.dir.exists", this._Lib, "IODirectoryExists");
                 this.RegisterFunction("perseus.io.dir.delete", this._Lib, "IODirectoryDelete");
-                this.RegisterFunction("perseus.io.dir._getfiles", this._Lib, "IODirectoryGetFiles");
+                this.RegisterFunction("perseus.io.dir._getfiles", this._Lib, "
+                IODirectoryGetFiles");
                 this.RegisterFunction("perseus.io.dir._getdirs", this._Lib, "IODirectoryGetDirectories");                
             }   
         }

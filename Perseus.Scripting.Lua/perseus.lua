@@ -61,7 +61,7 @@ perseus.string.findany = function (s, patterns, init, plain)
 	for i = 2, #patterns do
 		local pos = string.find(s, patterns[i], init, plain)
 		if pos then
-			if pos < pos_current then
+			if pos_current == nil or pos < pos_current then
 				pos_current = pos
 			-- in cases where 1 delimiter starts with another delimiter, choose the longer one	
 			elseif pos == pos_current and #patterns[i] > #value then
