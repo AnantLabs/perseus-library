@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Perseus.Scripting.Lua")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("fsfds")]
+[assembly: AssemblyCompany("Torology")]
 [assembly: AssemblyProduct("Perseus.Scripting.Lua")]
-[assembly: AssemblyCopyright("Copyright © fsfds 2010")]
+[assembly: AssemblyCopyright("Copyright © Blake Hancock 2010")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
