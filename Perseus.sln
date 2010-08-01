@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perseus", "Perseus\Perseus.csproj", "{7BFE48E3-02D0-4F1D-A415-CBB02A2A1164}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perseus.Controls.Html", "Perseus.Controls.HTML\Perseus.Controls.Html.csproj", "{C33DC1E9-5EFE-4F3D-AB60-63BD06FA74A0}"
@@ -16,6 +16,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perseus.Scripting.Lua", "Perseus.Scripting.Lua\Perseus.Scripting.Lua.csproj", "{B10BD553-5B8E-45EB-9016-F831846CA540}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perseus.Plugins", "Perseus.Plugins\Perseus.Plugins.csproj", "{D3E84C07-88A0-4A6F-81FC-36DCED2AB8BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perseus.Win32", "Perseus.Win32\Perseus.Win32.csproj", "{21FF3C36-1C87-4FB9-92EF-0909D6B350F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,6 +57,10 @@ Global
 		{D3E84C07-88A0-4A6F-81FC-36DCED2AB8BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3E84C07-88A0-4A6F-81FC-36DCED2AB8BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3E84C07-88A0-4A6F-81FC-36DCED2AB8BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21FF3C36-1C87-4FB9-92EF-0909D6B350F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21FF3C36-1C87-4FB9-92EF-0909D6B350F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21FF3C36-1C87-4FB9-92EF-0909D6B350F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21FF3C36-1C87-4FB9-92EF-0909D6B350F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

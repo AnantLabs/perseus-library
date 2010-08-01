@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 using Perseus;
 
 namespace Perseus.Plugins {
     public class PluginService<T> where T : IPlugin {
-        public PluginService() : this("plugins") { }
+        public PluginService() 
+            : this("plugins") { }
         public PluginService(string pluginDirectory) {
             if (!Path.IsPathRooted(pluginDirectory)) {
                 pluginDirectory = AppDomain.CurrentDomain.BaseDirectory + pluginDirectory;
@@ -24,7 +26,7 @@ namespace Perseus.Plugins {
         }
 
         private void LoadPlugins() {
-            this.Plugins = new Dictionary<string, PluginInstance<T>>();
+            this.Plugins = new List<PluginInstance<T>>();
 
             if (!Directory.Exists(this.PluginDirectory)) {
                 return;
@@ -38,15 +40,17 @@ namespace Perseus.Plugins {
                     foreach (Type pluginType in pluginAssembly.GetTypes()) {
                         // We can only use public and non abstract types
                         if (pluginType.IsPublic && !pluginType.IsAbstract) {
-                            if (pluginType.GetInterface("Perseus.Plugins.IPlugin", false) != null) {
+                            if (pluginType.GetInterface("Perseus.Plugins.IPlugin", false) != null) {                            
                                 object instance = Activator.CreateInstance(
                                     pluginAssembly.GetType(pluginType.ToString())
                                 );
-                                string name = instance.GetType().Name;
-                                //Type instanceType = ;
-                                //instanceType.Assembly.FullName
-                                PluginInstance<T> plugin = new PluginInstance<T>((T)instance, file);
-                                this.Plugins.Add(name, plugin);                                
+                                if (instance is T) {
+                                    PluginInstance<T> plugin = new PluginInstance<T>(
+                                        (T)instance,
+                                        file
+                                    );
+                                    this.Plugins.Add(plugin);
+                                }
                             }
                         }
                     }
@@ -54,17 +58,34 @@ namespace Perseus.Plugins {
             }
         }
 
-        public PluginInstance<T> this[string name] {
+        public PluginInstance<T> this[string fullName] {
             get {
-                if (this.Plugins.ContainsKey(name)) {
-                    return this.Plugins[name];
-                }                
+                var plugin = from p in this.Plugins
+                             where p.FullName == fullName
+                             select p;
 
+                if (plugin.Count() > 0) {
+                    return plugin.First();
+                }
+
+                return null;
+            }
+        }
+        public PluginInstance<T> this[Type type, string name] {
+            get {
+                var plugin = from p in this.Plugins
+                             where type.IsInstanceOfType(p.Instance) && p.Name == name
+                             select p;
+
+                if (plugin.Count() > 0) {
+                    return plugin.First();
+                }
+                
                 return null;
             }
         }
 
         public string PluginDirectory { get; protected set; }
-        public Dictionary<string, PluginInstance<T>> Plugins { get; protected set; }
+        public List<PluginInstance<T>> Plugins { get; protected set; }
     }
 }

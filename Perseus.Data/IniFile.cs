@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows;
+
 using Perseus;
 
 namespace Perseus.Data {
@@ -32,26 +34,29 @@ namespace Perseus.Data {
             if (!File.Exists(fileName)) { return; }
 
             using (StreamReader sr = new StreamReader(fileName)) {
-                string section = string.Empty;
+                this.Load(sr);
+            }
+        }
+        private void Load(StreamReader stream) {
+            string section = string.Empty;
 
-                while (!sr.EndOfStream) {
-                    string line = sr.ReadLine().Trim();
-                    if (line.Length > 0) {
-                        if (line.EnclosedWith("[", "]")) {
-                            section = line.Substring(1, line.Length - 2).Trim();
+            while (!stream.EndOfStream) {
+                string line = stream.ReadLine().Trim();
+                if (line.Length > 0) {
+                    if (line.EnclosedWith("[", "]")) {
+                        section = line.Substring(1, line.Length - 2).Trim();
+                    }
+                    else {
+                        if (!this.ContainsKey(section)) {
+                            this[section] = new Dictionary<string, string>();
+                        }
+
+                        string[] s = line.Split(new string[] { "=" }, 2, StringSplitOptions.None);
+                        if (s.Length == 2) {
+                            this[section][s[0].Trim()] = s[1].Trim();
                         }
                         else {
-                            if (!this.ContainsKey(section)) {
-                                this[section] = new Dictionary<string, string>();
-                            }
-
-                            string[] s = line.Split(new string[] { "=" }, 2, StringSplitOptions.None);
-                            if (s.Length == 2) {
-                                this[section][s[0].Trim()] = s[1].Trim();
-                            }
-                            else {
-                                this[section][s[0].Trim()] = string.Empty;
-                            }
+                            this[section][s[0].Trim()] = string.Empty;
                         }
                     }
                 }
@@ -61,13 +66,15 @@ namespace Perseus.Data {
             this.Save(false);
         }
         public void Save(bool ignoreEmpty) {
-            using (StreamWriter sw = new StreamWriter(this.FileName)) {
-                foreach (string section in this.Keys) {
-                    sw.WriteLine("[" + section + "]");
-                    foreach (string key in this[section].Keys) {
-                        sw.WriteLine(key + " = " + this[section][key]);
+            if (!ignoreEmpty || this.FileName != string.Empty) {
+                using (StreamWriter sw = new StreamWriter(this.FileName)) {
+                    foreach (string section in this.Keys) {
+                        sw.WriteLine("[" + section + "]");
+                        foreach (string key in this[section].Keys) {
+                            sw.WriteLine(key + " = " + this[section][key]);
+                        }
+                        sw.WriteLine();
                     }
-                    sw.WriteLine();
                 }
             }
         }
@@ -82,6 +89,7 @@ namespace Perseus.Data {
 
             return defaultValue;
         }
+
         public int GetInt(string group, string key) {
             return this.GetInt(group, key, 0);
         }
@@ -95,6 +103,35 @@ namespace Perseus.Data {
 
             return defaultValue;
         }
+        
+        public float GetFloat(string group, string key) {
+            return this.GetFloat(group, key, 0);
+        }
+        public float GetFloat(string group, string key, float defaultValue) {
+            if (this.ContainsKey(group) && this[group].ContainsKey(key)) {
+                float value;
+                if (float.TryParse(this[group][key], out value)) {
+                    return value;
+                }
+            }
+
+            return defaultValue;
+        }
+
+        public double GetDouble(string group, string key) {
+            return this.GetDouble(group, key, 0);
+        }
+        public double GetDouble(string group, string key, double defaultValue) {
+            if (this.ContainsKey(group) && this[group].ContainsKey(key)) {
+                double value;
+                if (double.TryParse(this[group][key], out value)) {
+                    return value;
+                }
+            }
+
+            return defaultValue;
+        }
+
         public bool GetBool(string group, string key) {
             return this.GetBool(group, key, false);
         }
@@ -124,6 +161,12 @@ namespace Perseus.Data {
             }
         }
         public void SetInt(string group, string key, int value) {
+            this.SetString(group, key, value.ToString());
+        }
+        public void SetFloat(string group, string key, float value) {
+            this.SetString(group, key, value.ToString());
+        }
+        public void SetDouble(string group, string key, double value) {
             this.SetString(group, key, value.ToString());
         }
         public void SetBool(string group, string key, bool value) {
@@ -160,6 +203,31 @@ namespace Perseus.Data {
             clone.FileName = this.FileName;
 
             return clone;            
+        }
+
+        public static IniFile FromResource(Uri resource) {
+            IniFile iniFile = new IniFile();
+
+            using (StreamReader sr = new StreamReader(
+                Application.GetResourceStream(resource).Stream
+            )) {
+                iniFile.Load(sr);
+            }
+
+            return iniFile;
+        }
+        public static IniFile FromEmbeddedResource(string resource) {
+            IniFile iniFile = new IniFile();
+
+            using (StreamReader sr = new StreamReader(
+                System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(
+                    resource
+                )
+            )) {
+                iniFile.Load(sr);
+            }
+
+            return iniFile;
         }
     }
 }

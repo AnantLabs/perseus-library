@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Perseus.Collections")]
+[assembly: AssemblyTitle("Perseus.IO")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Torology")]
-[assembly: AssemblyProduct("Perseus.Collections")]
-[assembly: AssemblyCopyright("Copyright © Blake Hancock 2010")]
+[assembly: AssemblyCompany("Microsoft")]
+[assembly: AssemblyProduct("Perseus.IO")]
+[assembly: AssemblyCopyright("Copyright © Microsoft 2010")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("512fb2f9-395c-4c95-956c-cb205d44eb30")]
+[assembly: Guid("d78a0e6f-9929-4d41-bcac-52a82e267a4a")]
 
 // Version information for an assembly consists of the following four values:
 //

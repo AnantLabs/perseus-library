@@ -150,7 +150,7 @@ namespace Perseus.Controls {
                     SplitOptions.Trim
                 );
 
-                string text_key = string.Empty;
+                string keyValue = string.Empty;
                 foreach (string part in parts) {
                     Key key = PInput.ResolveKey(part);
                     if (key == Key.LeftCtrl || key == Key.RightCtrl) {
@@ -166,14 +166,14 @@ namespace Perseus.Controls {
                     //    nt.IsWindows = true;
                     //}
                     else if (key != Key.None && HotKeyTextBox.IsValidKey(key)) {
-                        text_key = part;
+                        keyValue = part;
                         nt.Key = key;                                                
                     }
                 }
 
                 nt._IsApply = true;
 
-                nt.UpdateText(text_key);
+                nt.UpdateText(keyValue);
             }
 
             nt.CaretIndex = nt.Text.Length;
@@ -327,75 +327,75 @@ namespace Perseus.Controls {
                 return;
             }
 
-            string hotkey = string.Empty;
+            string hotKey = string.Empty;
 
             if (this.IsControl) {
-                hotkey += "Ctrl + ";
+                hotKey += "Ctrl + ";
             }
             if (this.IsShift) {
-                hotkey += "Shift + ";
+                hotKey += "Shift + ";
             }
             if (this.IsAlt) {
-                hotkey += "Alt + ";
+                hotKey += "Alt + ";
             }
             //if (this.IsWindows) {
-            //    hotkey += "Win + ";
+            //    hotKey += "Win + ";
             //}
             if (this.Key != Key.None) {
                 if (sameKey) {
                     key = this.Text.Replace("Ctrl +", "").Replace("Shift +", "").Replace("Alt +", "").Trim();
                 }
                 else if (key == string.Empty) {
-                    key = this.FormatKey(this.Key);
+                    key = PInput.FormatKey(this.Key);
                 }
                 this.KeyValue = key;
-                hotkey += key + " ";
+                hotKey += key + " ";
             }
             else {
                 this.KeyValue = string.Empty;
             }
 
             this._IsApply = false;
-            this.Text = hotkey;
+            this.Text = hotKey;
             this._IsApply = true;            
         }
 
-        private string FormatKey(Key key) {
-            string k = this.Key.ToString();
+        //private string FormatKey(Key key) {
+        //    string k = this.Key.ToString();
 
-            // If it's a number key, show remove the D from infront of it.
-            if (k.Length == 2 && k.Substring(0, 1) == "D") {
-                return k.Substring(1);
-            }
+        //    // If it's a number key, show remove the D from infront of it.
+        //    if (k.Length == 2 && k.Substring(0, 1) == "D") {
+        //        return k.Substring(1);
+        //    }
 
-            if (k.SafeSubstring(0, 6) == "NumPad") {
-                return "Num " + k.Substring(6);
-            }
+        //    if (k.SafeSubstring(0, 6) == "NumPad") {
+        //        return "Num " + k.Substring(6);
+        //    }
 
-            switch (k) {
-                case "Divide":
-                    return "Num /";
-                case "Multiply":
-                    return "Num *";
-                case "Subtract":
-                    return "Num -";
-                case "Add":
-                    return "Num +";
-                case "Decimal":
-                    return "Num .";
-                case "Return":
-                    return "Enter";
-                case "PageUp":
-                case "Prior":
-                    return "Page Up";
-                case "PageDown":
-                case "Next":
-                    return "Page Down";
-                case "Back":
-                    return "Backspace";
-            }
+        //    switch (k) {
+        //        case "Divide":
+        //            return "Num /";
+        //        case "Multiply":
+        //            return "Num *";
+        //        case "Subtract":
+        //            return "Num -";
+        //        case "Add":
+        //            return "Num +";
+        //        case "Decimal":
+        //            return "Num .";
+        //        case "Return":
+        //            return "Enter";
+        //        case "PageUp":
+        //        case "Prior":
+        //            return "Page Up";
+        //        case "PageDown":
+        //        case "Next":
+        //            return "Page Down";
+        //        case "Back":
+        //            return "Backspace";
+        //    }
 
-            return k;
-        }
+        //    return k;
+        //}
     }
 }
