@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Perseus.Win32;
-
 namespace Perseus {
     public static class PEnvironment {
         public static bool IsWindowsXp {
@@ -45,7 +43,9 @@ namespace Perseus {
         public static bool IsWindowsXpOrAbove {
             get {
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
-                    if ((Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 1) || Environment.OSVersion.Version.Major >= 6) {
+                    if ((Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor >= 1) || 
+                        Environment.OSVersion.Version.Major >= 6
+                    ) {
                         return true;
                     }   
                 }
@@ -63,7 +63,20 @@ namespace Perseus {
 
                 return false;
             }
-        }        
+        }
+        public static bool IsWindows7OrAbove {
+            get {
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
+                    if ((Environment.OSVersion.Version.Major == 6 && Environment.OSVersion.Version.Minor >= 1) ||
+                        Environment.OSVersion.Version.Major >= 7
+                    ) {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }       
         public static bool IsWindowsXpOrBelow {
             get {
                 return !PEnvironment.IsWindowsVistaOrAbove;

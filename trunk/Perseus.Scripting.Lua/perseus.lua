@@ -31,21 +31,21 @@ perseus.string.split = function (s, delim, count)
 	return t
 end
 
-perseus.string.join = function (t, glue)
-	if type(t) ~= "table" then
-		return tostring(t)
-	elseif #t == 0 then
-		return ''
-	end
-		
-	local result = t[1]	
-	
-	for i = 2, #t do
-		result = result .. glue .. t[i]
-	end
-	
-	return result
-end
+--perseus.string.join = function (t, glue)
+	--if type(t) ~= "table" then
+		--return tostring(t)
+	--elseif #t == 0 then
+		--return ''
+	--end
+		--
+	--local result = t[1]	
+	--
+	--for i = 2, #t do
+		--result = result .. glue .. t[i]
+	--end
+	--
+	--return result
+--end
 
 -- similar to regular string.find, only it finds the first match of multiple patterns
 perseus.string.findany = function (s, patterns, init, plain)

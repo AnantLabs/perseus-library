@@ -49,8 +49,7 @@ namespace Perseus.Scripting.Lua {
                 this.RegisterFunction("perseus.io.dir.create", this._Lib, "IODirectoryCreate");
                 this.RegisterFunction("perseus.io.dir.exists", this._Lib, "IODirectoryExists");
                 this.RegisterFunction("perseus.io.dir.delete", this._Lib, "IODirectoryDelete");
-                this.RegisterFunction("perseus.io.dir._getfiles", this._Lib, "
-                IODirectoryGetFiles");
+                this.RegisterFunction("perseus.io.dir._getfiles", this._Lib, "IODirectoryGetFiles");
                 this.RegisterFunction("perseus.io.dir._getdirs", this._Lib, "IODirectoryGetDirectories");                
             }   
         }
@@ -58,10 +57,16 @@ namespace Perseus.Scripting.Lua {
             this._Lua.Dispose();
         }
 
-        public void LoadFile(string fileName) {
+        public object LoadFile(string fileName) {
             // LUA doesn't play nice with BOM so use dostring instead of dofile
             string lua = File.ReadAllText(fileName);
-            this._Lua.DoString(lua);            
+            var result = this._Lua.DoString(lua);
+            
+            if (result != null) {
+                return result[0];
+            }
+
+            return null;
         }
 
         public bool IsSet(string name) {
@@ -84,8 +89,14 @@ namespace Perseus.Scripting.Lua {
             return (LuaTable)o;
         }
 
-        public void DoString(string chunk) {
-            this._Lua.DoString(chunk);
+        public object DoString(string chunk) {
+            var result = this._Lua.DoString(chunk);
+
+            if (result != null) {
+                return result[0];
+            }
+
+            return null;
         }
 
         public LuaFunction RegisterFunction(string path, object target, string function) {

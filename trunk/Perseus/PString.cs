@@ -66,56 +66,119 @@ namespace Perseus {
             }
         }
         #endregion
+        #region Starts With
+        public static bool StartsWith(this string s, string[] values) {
+            return PString.StartsWith(s, values, false, null);
+        }
+        public static bool StartsWith(this string s, string[] values, StringComparison comparisonType) {
+            foreach (string value in values) {
+                if (s.StartsWith(value, comparisonType)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        public static bool StartsWith(this string s, string[] values, bool ignoreCase, CultureInfo culture) {
+            foreach (string value in values) {
+                if (s.StartsWith(value, ignoreCase, culture)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        #endregion
+        #region Ends With
+        public static bool EndsWith(this string s, string[] values) {
+            return PString.EndsWith(s, values, false, null);
+        }
+        public static bool EndsWith(this string s, string[] values, StringComparison comparisonType) {
+            foreach (string value in values) {
+                if (s.EndsWith(value, comparisonType)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        public static bool EndsWith(this string s, string[] values, bool ignoreCase, CultureInfo culture) {
+            foreach (string value in values) {
+                if (s.EndsWith(value, ignoreCase, culture)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        #endregion
         #region Find Index In
         /// <summary>
         /// Reports the index of the longest first occurrence of the specified string in the specified string <seealso cref="System.Array"/>.
         /// </summary>
         /// <param name="s">The <seealso cref="System.String"/> to check.</param>
-        /// <param name="stringArray">The <seealso cref="System.Array"/> to match to.</param>
+        /// <param name="values">The <seealso cref="System.Array"/> to match to.</param>
         /// <returns>The index position in the <seealso cref="System.Array"/> of the specified <seealso cref="System.String"/> if it is found, or -1 if it is not.</returns>
-        public static int FindIndexIn(this string s, string[] stringArray) {
-            return FindIndexIn(s, stringArray, 0, true);
+        public static int FindIndexIn(this string s, string[] values) {
+            return FindIndexIn(s, values, 0, false, null);
         }
         /// <summary>
         /// Reports the index of the longest first occurrence of the specified string in the specified string <seealso cref="System.Array"/>.
         /// </summary>
         /// <param name="s">The <seealso cref="System.String"/> to check.</param>
         /// <param name="startIndex">The index of the start of the specified <seealso cref="System.String"/>.</param>
-        /// <param name="stringArray">The <seealso cref="System.Array"/> to match to.</param>
+        /// <param name="values">The <seealso cref="System.Array"/> to match to.</param>
         /// <returns>The index position in the <seealso cref="System.Array"/> of the specified <seealso cref="System.String"/> if it is found, or -1 if it is not.</returns>
-        public static int FindIndexIn(this string s, string[] stringArray, int startIndex) {            
-            return FindIndexIn(s, stringArray, startIndex, true);
+        public static int FindIndexIn(this string s, string[] values, int startIndex) {            
+            return FindIndexIn(s, values, startIndex, false, null);
         }
-        public static int FindIndexIn(this string s, string[] stringArray, int startIndex, bool caseSensitive) {
+        public static int FindIndexIn(this string s, string[] values, int startIndex, StringComparison comparisonType) {
             int index = -1;
-            StringComparison sc = (caseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase);
-
-            for (int i = 0; i < stringArray.Length; i++) {
-                if (string.Compare(stringArray[i], SafeSubstring(s, startIndex, stringArray[i].Length), sc) == 0) {
-                    if (index == -1 || stringArray[index].Length < stringArray[i].Length) {
+            
+            for (int i = 0; i < values.Length; i++) {
+                if (string.Compare(values[i], SafeSubstring(s, startIndex, values[i].Length), comparisonType) == 0) {
+                    if (index == -1 || values[index].Length < values[i].Length) {
                         index = i;
                     }
                 }
             }
+
+            return index;
+        }
+        public static int FindIndexIn(this string s, string[] values, int startIndex, bool ignoreCase, CultureInfo culture) {
+            int index = -1;
+
+            if (culture == null) {
+                culture = CultureInfo.CurrentCulture;
+            }
+
+            for (int i = 0; i < values.Length; i++) {                
+                if (string.Compare(values[i], SafeSubstring(s, startIndex, values[i].Length), ignoreCase, culture) == 0) {
+                    if (index == -1 || values[index].Length < values[i].Length) {
+                        index = i;
+                    }
+                }
+            }
+
             return index;
         }
         #endregion
         #region IsIn
-        public static bool IsIn(this string s, string[] stringArray) {
-            return PString.IsIn(s, stringArray, true);
+        public static bool IsIn(this string s, string[] values) {
+            return PString.IsIn(s, values, false);
         }
-        public static bool IsIn(this string s, string[] stringArray, bool caseSensitive) {
-            return (PString.IndexIn(s, stringArray, caseSensitive) >= 0);
+        public static bool IsIn(this string s, string[] values, bool ignoreCase) {
+            return (PString.IndexIn(s, values, ignoreCase) >= 0);
         }
         #endregion
         #region IndexIn
-        public static int IndexIn(this string s, string[] stringArray) {
-            return PString.IndexIn(s, stringArray, true);
+        public static int IndexIn(this string s, string[] values) {
+            return PString.IndexIn(s, values, false);
         }
-        public static int IndexIn(this string s, string[] stringArray, bool caseSensitive) {
-            StringComparison sc = (caseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase);
-            for (int i = 0; i < stringArray.Length; i++) {
-                if (s.Is(stringArray[i])) { return i; }
+        public static int IndexIn(this string s, string[] values, bool ignoreCase) {
+            StringComparison sc = (ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
+            for (int i = 0; i < values.Length; i++) {
+                if (s.Is(values[i])) { return i; }
             }
 
             return -1;
@@ -199,38 +262,21 @@ namespace Perseus {
         #endregion
         #region Is
         public static bool Is(this string strA, string strB) {
-            if (string.Compare(strA, strB, StringComparison.Ordinal) == 0) {
-                return true;
-            }
-            else {
-                return false;
-            }
+            return PString.Is(strA, strB, false);
         }
-        public static bool Is(this string strA, string strB, bool caseSensitive) {
-            StringComparison sc = (caseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase);
+        public static bool Is(this string strA, string strB, bool ignoreCase) {
+            StringComparison sc = (ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
             if (string.Compare(strA, strB, sc) == 0) {
                 return true;
             }
-            else {
-                return false;
-            }
+            
+            return false;            
         }
         public static bool IsNot(this string strA, string strB) {
-            if (string.Compare(strA, strB, StringComparison.Ordinal) == 0) {
-                return false;
-            }
-            else {
-                return true;
-            }
+            return PString.IsNot(strA, strB, false);            
         }
-        public static bool IsNot(this string strA, string strB, bool caseSensitive) {
-            StringComparison sc = (caseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase);
-            if (string.Compare(strA, strB, sc) == 0) {
-                return false;
-            }
-            else {
-                return true;
-            }
+        public static bool IsNot(this string strA, string strB, bool ignoreCase) {
+            return !PString.Is(strA, strB, ignoreCase);                        
         }
         public static bool IsEmpty(this string s) {
             return (PString.Is(s, string.Empty) || s == null);

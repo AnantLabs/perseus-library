@@ -5,7 +5,7 @@ using System.Windows.Input;
 namespace Perseus {    
     public static class PInput {
         [DllImport("user32.dll")]
-        private static extern short VkKeyScan(char ch);
+        internal static extern short VkKeyScan(char ch);
 
         public static Key ResolveKey(string key) {
             key = key.Trim().ToLower();
@@ -78,6 +78,58 @@ namespace Perseus {
             }
 
             return result;
+        }
+
+        public static string FormatKey(Key key) {
+            if (key == Key.None) {
+                return string.Empty;
+            }
+
+            string k = key.ToString();
+
+            // If it's a number key, show remove the D from infront of it.
+            if (k.Length == 2 && k.Substring(0, 1) == "D") {
+                return k.Substring(1);
+            }
+
+            if (k.SafeSubstring(0, 6) == "NumPad") {
+                return "Num " + k.Substring(6);
+            }
+
+            switch (key) {
+                case Key.LeftAlt:
+                case Key.RightAlt:
+                    return "Alt";
+                case Key.LeftCtrl:
+                case Key.RightCtrl:
+                    return "Ctrl";
+                case Key.LeftShift:
+                case Key.RightShift:
+                    return "Shift";
+                case Key.LWin:
+                case Key.RWin:
+                    return "Win";
+                case Key.Divide:
+                    return "Num /";
+                case Key.Multiply:
+                    return "Num *";
+                case Key.Subtract:
+                    return "Num -";
+                case Key.Add:
+                    return "Num +";
+                case Key.Decimal:
+                    return "Num .";
+                case Key.Return:
+                    return "Enter";
+                case Key.PageUp:
+                    return "Page Up";
+                case Key.PageDown:                
+                    return "Page Down";
+                case Key.Back:
+                    return "Backspace";
+            }
+
+            return k;
         }
     }
 }

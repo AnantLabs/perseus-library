@@ -3,6 +3,18 @@ using System.Xml.Linq;
 
 namespace Perseus.Xml {
     public static class Extensions {
+        public static string ValueOr(this XElement element, string value) {
+            if (element == null) {
+                return value;
+            }
+            else { return element.Value; }
+        }
+        public static string ValueOr(this XAttribute attribute, string value) {
+            if (attribute == null) {
+                return value;
+            }
+            else { return attribute.Value; }
+        }
         public static string ValueOrEmpty(this XElement element) {
             if (element == null) {
                 return string.Empty;
