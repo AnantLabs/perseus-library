@@ -63,6 +63,8 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="IPlugin.cs" />
+    <Compile Include="PluginEventArgs.cs" />
+    <Compile Include="PluginEventHandler.cs" />
     <Compile Include="PluginInstance.cs" />
     <Compile Include="PluginServices.cs" />
     <Compile Include="PluginInfo.cs" />

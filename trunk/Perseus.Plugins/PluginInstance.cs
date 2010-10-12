@@ -1,7 +1,7 @@
 ﻿using System;
 
 namespace Perseus.Plugins {
-    public class PluginInstance<T> {
+    public class PluginInstance<T> where T : IPlugin {
         public PluginInstance()
             : this(default(T), string.Empty) { }
 
@@ -9,7 +9,7 @@ namespace Perseus.Plugins {
             this.Instance = instance;
             this.Name = instance.GetType().Name;
             this.FullName = instance.GetType().FullName;
-            this.AssemblyPath = assemblyPath;
+            this.AssemblyPath = assemblyPath;            
         }
         
         public T Instance { get; set; }

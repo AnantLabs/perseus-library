@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Microsoft.Win32;
 
 namespace Perseus {
     public static class PIO {
@@ -23,6 +24,16 @@ namespace Perseus {
             while ((read = input.Read(buffer, 0, buffer.Length)) > 0) {
                 output.Write(buffer, 0, read);
             }
+        }
+        public static string GetMimeType(string fileName) {
+            string extension = Path.GetExtension(fileName).ToLower();
+
+            RegistryKey regKey = Microsoft.Win32.Registry.ClassesRoot.OpenSubKey(extension);
+            if (regKey != null && regKey.GetValue("Content Type") != null) {
+                return regKey.GetValue("Content Type").ToString();
+            }
+
+            return "application/octetstream";
         }
     }
 }
