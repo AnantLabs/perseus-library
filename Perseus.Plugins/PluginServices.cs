@@ -8,6 +8,8 @@ using Perseus;
 
 namespace Perseus.Plugins {
     public class PluginService<T> where T : IPlugin {
+        private bool _IsLoaded;
+
         public PluginService() 
             : this("plugins") { }
         public PluginService(string pluginDirectory) {
@@ -21,11 +23,15 @@ namespace Perseus.Plugins {
             }
 
             this.PluginDirectory = pluginDirectory;
-
-            this.LoadPlugins();
+            this._IsLoaded = false;
         }
 
-        private void LoadPlugins() {
+        public void LoadPlugins() {
+            if (this._IsLoaded) {
+                throw new Exception("Plugins already loaded.");
+            }
+
+            this._IsLoaded = true;
             this.Plugins = new List<PluginInstance<T>>();
 
             if (!Directory.Exists(this.PluginDirectory)) {
@@ -34,13 +40,27 @@ namespace Perseus.Plugins {
 
             foreach (string file in Directory.GetFiles(this.PluginDirectory)) {
                 if (Path.GetExtension(file) == ".dll") {
+                    string name = Path.GetFileNameWithoutExtension(file);
+                    PluginEventArgs args = new PluginEventArgs(name);
+                    this.OnAssemblyLoading(this, args);
+                    if (args.Cancel) {
+                        continue;
+                    }
+
+
                     Assembly pluginAssembly = Assembly.LoadFrom(file);
 
                     //Go through all types found in the assembly
                     foreach (Type pluginType in pluginAssembly.GetTypes()) {
                         // We can only use public and non abstract types
                         if (pluginType.IsPublic && !pluginType.IsAbstract) {
-                            if (pluginType.GetInterface("Perseus.Plugins.IPlugin", false) != null) {                            
+                            if (pluginType.GetInterface("Perseus.Plugins.IPlugin", false) != null) {                                
+                                args = new PluginEventArgs(pluginType.FullName);
+                                this.OnPluginFound(this, args);
+                                if (args.Cancel) {
+                                    continue;
+                                }
+
                                 object instance = Activator.CreateInstance(
                                     pluginAssembly.GetType(pluginType.ToString())
                                 );
@@ -57,6 +77,22 @@ namespace Perseus.Plugins {
                 }
             }
         }
+
+        #region Events
+        public event PluginEventHandler PluginFound;
+        protected virtual void OnPluginFound(object sender, PluginEventArgs e) {
+            if (this.PluginFound != null) {
+                this.PluginFound(sender, e);
+            }
+        }
+
+        public event PluginEventHandler AssemblyLoading;
+        protected virtual void OnAssemblyLoading(object sender, PluginEventArgs e) {
+            if (this.AssemblyLoading != null) {
+                this.AssemblyLoading(sender, e);
+            }
+        }
+        #endregion
 
         public PluginInstance<T> this[string fullName] {
             get {

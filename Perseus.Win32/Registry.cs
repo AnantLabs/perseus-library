@@ -63,17 +63,5 @@ namespace Perseus.Win32 {
             regKey.Close();
             return o;            
         }
-
-
-        public static string GetMimeType(string fileName) {
-            string extension = Path.GetExtension(fileName).ToLower();
-
-            RegistryKey regKey = Microsoft.Win32.Registry.ClassesRoot.OpenSubKey(extension);
-            if (regKey != null && regKey.GetValue("Content Type") != null) {
-                return regKey.GetValue("Content Type").ToString();
-            }
-
-            return "application/octetstream";
-        }
     }
 }

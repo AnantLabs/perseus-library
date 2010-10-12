@@ -25,27 +25,11 @@ perseus.string.split = function (s, delim, count)
 			-- Add remaining
 			table.insert(t, string.sub(s, start))
 			break
-		end			
+		end
 	end
 	
 	return t
 end
-
---perseus.string.join = function (t, glue)
-	--if type(t) ~= "table" then
-		--return tostring(t)
-	--elseif #t == 0 then
-		--return ''
-	--end
-		--
-	--local result = t[1]	
-	--
-	--for i = 2, #t do
-		--result = result .. glue .. t[i]
-	--end
-	--
-	--return result
---end
 
 -- similar to regular string.find, only it finds the first match of multiple patterns
 perseus.string.findany = function (s, patterns, init, plain)
@@ -75,44 +59,71 @@ perseus.string.findany = function (s, patterns, init, plain)
 	return {pos_current, value}
 end
 
--- remove trailing and leading whitespace from string.
+-- remove trailing and leading whitespace from string
 perseus.string.trim = function (s)  
 	return (string.gsub(s, "^%s*(.-)%s*$", "%1"))
 end
 
--- remove leading whitespace from string.
+-- remove leading whitespace from string
 perseus.string.ltrim = function (s)
 	return (string.gsub(s, "^%s*", ''))
 end
 
--- remove trailing whitespace from string.
+-- remove trailing whitespace from string
 perseus.string.rtrim = function (s)
 	local n = #s
 	while n > 0 and string.find(s, "^%s", n) do n = n - 1 end
 	return string.sub(s, 1, n)
 end
 
+-- returns true if the string starts with the specified value; otherwise false
+perseus.string.startswith = function(s, with)
+	return (string.sub(s, 1, #with) == with)
+end
+
+-- returns true if the string ends with the specified value; otherwise false
+perseus.string.endswith = function(s, with)
+	return (string.sub(s, -#with) == with)
+end
+
 perseus.table = {}
 -- map a function onto table values
-perseus.table.map = function (table, func)
-	local new_table = {}
-	for i, v in ipairs(table) do
-		new_table[i] = func(v)
+perseus.table.map = function (t, func)
+	local new_t = {}
+	for i, v in pairs(t) do
+		new_t[i] = func(v)
 	end
-	return new_table
+	return new_t
 end
 
 -- removes empty items from a table
-perseus.table.removeempty = function (table)
-	local new_table = {}
+perseus.table.removeempty = function (t)
+	local new_t = {}
 	local index = 0
-	for i, v in ipairs(table) do
-		if table[i] ~= "" then
-			index = index + 1
-			new_table[index] = v
+	local max = table.maxn(t)
+
+	for i, v in pairs(t) do
+		if t[i] ~= "" then
+			-- if its an indexed value, rebuild the index
+			if type(i) == "number" and i >= 1 and i <= max then
+				index = index + 1
+				new_t[index] = v
+			else
+				new_t[i] = v
+			end
 		end
 	end
-	return new_table
+
+	return new_t
+end
+
+perseus.table.contains = function(t, element)
+	for _, v in pairs(t) do
+		if v == element then
+			return true
+		end
+	end
+	return false
 end
 
 perseus.math = {}

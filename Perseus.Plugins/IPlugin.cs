@@ -6,5 +6,6 @@ using System.Text;
 namespace Perseus.Plugins {
     public interface IPlugin {
         PluginInfo PluginInfo { get; }
+        bool IsEnabled { get; set; }
     }
 }

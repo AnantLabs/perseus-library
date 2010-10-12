@@ -63,11 +63,11 @@ namespace Perseus.Data {
             }
         }
         public void Save() {
-            this.Save(false);
+            this.Save(this.FileName);
         }
-        public void Save(bool ignoreEmpty) {
-            if (!ignoreEmpty || this.FileName != string.Empty) {
-                using (StreamWriter sw = new StreamWriter(this.FileName)) {
+        public void Save(string fileName) {
+            if (fileName != string.Empty) {
+                using (StreamWriter sw = new StreamWriter(fileName)) {
                     foreach (string section in this.Keys) {
                         sw.WriteLine("[" + section + "]");
                         foreach (string key in this[section].Keys) {
@@ -176,6 +176,25 @@ namespace Perseus.Data {
             }
 
             this.SetString(group, key, boolValue);
+        }
+
+
+        public void SetNewString(string group, string key, string value) {
+            if (!this.ContainsKey(group) || !this[group].ContainsKey(key)) {
+                this.SetString(group, key, value);
+            }
+        }
+        public void SetNewInt(string group, string key, int value) {
+            this.SetNewString(group, key, value.ToString());
+        }
+        public void SetNewFloat(string group, string key, float value) {
+            this.SetNewString(group, key, value.ToString());
+        }
+        public void SetNewDouble(string group, string key, double value) {
+            this.SetNewString(group, key, value.ToString());
+        }
+        public void SetNewBool(string group, string key, bool value) {
+            this.SetNewString(group, key, (value ? "1" : "0"));
         }
 
         public bool RemoveValue(string group) {
