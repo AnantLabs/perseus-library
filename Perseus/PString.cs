@@ -184,6 +184,24 @@ namespace Perseus {
             return -1;
         }
         #endregion
+        public static bool ContainsAny(this string s, string[] values) {
+            foreach (string str in values) {
+                if (s.Contains(str)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        public static bool ContainsAny(this string s, char[] values) {
+            foreach (char c in values) {
+                if (s.IndexOf(c) >= 0) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
         #region Enclosed With
         public static bool EnclosedWith(this string s, string startValue, string endValue) {
             return PString.EnclosedWith(s, startValue, endValue, false, null);
