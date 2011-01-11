@@ -318,7 +318,7 @@ namespace Perseus {
             }
             else {
                 if (Trim) {
-                    StringSplitOptions sso = ToSplitOptions(Options);
+                    StringSplitOptions sso = ToStringSplitOptions(Options);
                     string[] tmp = s.Split(Separator, Count, sso);
                     if ((sso | StringSplitOptions.RemoveEmptyEntries) == sso) {
                         for (int i = tmp.GetUpperBound(0); i >= 0; i--) {
@@ -336,7 +336,7 @@ namespace Perseus {
                     return tmp;
                 }
                 else {
-                    return s.Split(Separator, Count, ToSplitOptions(Options));
+                    return s.Split(Separator, Count, ToStringSplitOptions(Options));
                 }
             }
         }
@@ -431,7 +431,7 @@ namespace Perseus {
             }
             else {
                 if (Trim) {
-                    StringSplitOptions sso = ToSplitOptions(Options);
+                    StringSplitOptions sso = ToStringSplitOptions(Options);
                     string[] tmp = s.Split(Separator, sso);
                     if ((sso | StringSplitOptions.RemoveEmptyEntries) == sso) {
                         for (int i = tmp.GetUpperBound(0); i >= 0; i--) {
@@ -449,7 +449,7 @@ namespace Perseus {
                     return tmp;
                 }
                 else {
-                    return s.Split(Separator, ToSplitOptions(Options));
+                    return s.Split(Separator, ToStringSplitOptions(Options));
                 }
             }
         }
@@ -2244,7 +2244,7 @@ namespace Perseus {
         }
         #endregion
         #region Misc
-        private static StringSplitOptions ToSplitOptions(SplitOptions options) {
+        private static StringSplitOptions ToStringSplitOptions(SplitOptions options) {
             if (Bit.IsIn(options, SplitOptions.RemoveEmptyEntries)) {
                 return StringSplitOptions.RemoveEmptyEntries;
             }
