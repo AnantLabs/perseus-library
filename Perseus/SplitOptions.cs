@@ -30,6 +30,10 @@ namespace Perseus {
         /// <summary>
         /// The return value's array elements are trimmed of whitespace.
         /// </summary>
-        Trim = 16
+        Trim = 16,
+        /// <summary>
+        /// The return value's array elements are all unique.
+        /// </summary>
+        RemoveDuplicates = 32
     }
 }

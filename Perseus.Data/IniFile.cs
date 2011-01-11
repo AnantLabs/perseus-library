@@ -39,26 +39,48 @@ namespace Perseus.Data {
         }
         private void Load(StreamReader stream) {
             string section = string.Empty;
+            string item = null;
 
             while (!stream.EndOfStream) {
-                string line = stream.ReadLine().Trim();
-                if (line.Length > 0) {
-                    if (line.EnclosedWith("[", "]")) {
-                        section = line.Substring(1, line.Length - 2).Trim();
+                string line = stream.ReadLine();
+                string tline = line.Trim();
+
+                if (tline.Length > 0) {
+                    if (tline.EnclosedWith("[", "]")) {
+                        section = tline.Substring(1, tline.Length - 2).Trim();
+                        item = null;
                     }
                     else {
                         if (!this.ContainsKey(section)) {
                             this[section] = new Dictionary<string, string>();
                         }
 
-                        string[] s = line.Split(new string[] { "=" }, 2, StringSplitOptions.None);
+                        if (line.CharAt(0) == " " && item != null) {
+                            this[section][item] += Environment.NewLine + tline;
+                            continue;
+                        }
+
+                        string[] s = tline.Split(new string[] { "=" }, 2, StringSplitOptions.None);
+                        item = s[0].Trim();
+
                         if (s.Length == 2) {
-                            this[section][s[0].Trim()] = s[1].Trim();
+                            this[section][item] = s[1];
                         }
                         else {
-                            this[section][s[0].Trim()] = string.Empty;
+                            this[section][item] = string.Empty;
                         }
                     }
+                }
+            }
+
+            // trim each item
+            string[] sectionKeys = new string[this.Keys.Count];
+            this.Keys.CopyTo(sectionKeys, 0);
+            foreach (string s1 in sectionKeys) {
+                string[] itemKeys = new string[this[s1].Keys.Count];                
+                this[s1].Keys.CopyTo(itemKeys, 0);
+                foreach (string s2 in itemKeys) {
+                    this[s1][s2] = this[s1][s2].Trim();
                 }
             }
         }
@@ -71,7 +93,13 @@ namespace Perseus.Data {
                     foreach (string section in this.Keys) {
                         sw.WriteLine("[" + section + "]");
                         foreach (string key in this[section].Keys) {
-                            sw.WriteLine(key + " = " + this[section][key]);
+                            string[] lines = this[section][key].Trim().Split(Environment.NewLine);
+
+                            for (int i = 1; i < lines.Length; ++i) {
+                                lines[i] = " " + lines[i];
+                            }
+                            
+                            sw.WriteLine(key + " = " + string.Join(Environment.NewLine, lines));
                         }
                         sw.WriteLine();
                     }

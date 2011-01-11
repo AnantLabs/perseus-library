@@ -2,7 +2,9 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-
+/** TODO
+ * Add cylce feature for when max min is set, using scroll wheel will go back to beginning
+ */
 namespace Perseus.Controls {
     public class NumericTextBox : TextBox {
         #region Private Members
@@ -194,6 +196,15 @@ namespace Perseus.Controls {
         public double Increment {
             get { return (double)GetValue(NumericTextBox.IncrementProperty); }
             set { SetValue(NumericTextBox.IncrementProperty, value); }
+        }
+        public double Value {
+            get {
+                double d;
+
+                double.TryParse(this.Text, out d);
+
+                return d;
+            }
         }
         #endregion
         #region Events
