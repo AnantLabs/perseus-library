@@ -23,34 +23,28 @@ namespace Perseus.Win32 {
 
         public FullScreenDetector() : this(1000) {}
         public FullScreenDetector(int interval) {
-            this._State = false;
-
-            if (interval < 0) {
+            if (interval <= 0) {
                 throw new ArgumentOutOfRangeException("Interval must be greater than or equal to 1");
             }
 
             this._Timer = new DispatcherTimer();
             this._Timer.Tick += new EventHandler(Timer_Tick);
             this._Timer.Interval = TimeSpan.FromMilliseconds(interval);
+
+            this._State = FullScreenDetector.IsFullScreen();
         }
 
         private void Timer_Tick(object sender, EventArgs e) {
-            if (FullScreenDetector.IsFullScreen()) {
-                if (this._State == false) {
-                    if (this.FullScreenEnter != null) {
-                        this.FullScreenEnter(this, EventArgs.Empty);                        
-                    }
-
-                    this._State = true;
+            bool state = this._State;
+            this._State = FullScreenDetector.IsFullScreen();
+            if (this._State) {
+                if (state == false && this.FullScreenEnter != null) {
+                    this.FullScreenEnter(this, EventArgs.Empty);                                            
                 }
             }
             else {
-                if (this._State == true) {
-                    if (this.FullScreenExit != null) {
-                        this.FullScreenExit(this, EventArgs.Empty);
-                    }
-
-                    this._State = false;
+                if (state == true && this.FullScreenExit != null) {
+                    this.FullScreenExit(this, EventArgs.Empty);                    
                 }
             }
         }
@@ -58,14 +52,15 @@ namespace Perseus.Win32 {
         public event EventHandler FullScreenEnter;
         public event EventHandler FullScreenExit;
 
-        public bool IsEnabled {
-            get { return this._Timer.IsEnabled; }
-            set {
-                this._State = FullScreenDetector.IsFullScreen();
-                this._Timer.IsEnabled = value;
-            }
+        public bool State {
+            get { return this._State; }
+            set { this._State = value; }
         }
 
+        public bool IsEnabled {
+            get { return this._Timer.IsEnabled; }
+            set { this._Timer.IsEnabled = value; }
+        }        
         public static bool IsFullScreen() {
             RECT appBounds;
             Rectangle screenBounds;
@@ -82,12 +77,12 @@ namespace Perseus.Win32 {
                     screenBounds = Screen.FromHandle(hWnd).Bounds;
                     if ((appBounds.Bottom - appBounds.Top) == screenBounds.Height && 
                         (appBounds.Right - appBounds.Left) == screenBounds.Width
-                    ) {
+                    ) {                        
                         return true;
                     }
                 }
             }
-
+            
             return false;
         }
     }
