@@ -96,8 +96,19 @@ namespace Perseus.Plugins {
 
         public PluginInstance<T> this[string fullName] {
             get {
-                var plugin = from p in this.Plugins
-                             where p.FullName == fullName
+                // In situations where the instance class is the same as the last 
+                // namespace we will not require the last namespace.
+                int pos = fullName.LastIndexOf('.');
+                string last = string.Empty;
+                if (pos >= 0) {
+                    last = fullName.Substring(pos);
+                    if (fullName.EndsWith(last + last)) {
+                        fullName = fullName.Substring(0, pos);
+                    }
+                }
+
+                var plugin = from p in this.Plugins                             
+                             where p.FullName.Is(fullName) || p.FullName.Is(fullName + last)
                              select p;
 
                 if (plugin.Count() > 0) {
