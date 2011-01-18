@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perseus.Plugins", "Perseus.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perseus.Win32", "Perseus.Win32\Perseus.Win32.csproj", "{21FF3C36-1C87-4FB9-92EF-0909D6B350F9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perseus.Windows", "Perseus.Windows\Perseus.Windows.csproj", "{4D4719A8-CFAB-479B-9EFF-E91FC0A91237}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{21FF3C36-1C87-4FB9-92EF-0909D6B350F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21FF3C36-1C87-4FB9-92EF-0909D6B350F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{21FF3C36-1C87-4FB9-92EF-0909D6B350F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D4719A8-CFAB-479B-9EFF-E91FC0A91237}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D4719A8-CFAB-479B-9EFF-E91FC0A91237}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D4719A8-CFAB-479B-9EFF-E91FC0A91237}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D4719A8-CFAB-479B-9EFF-E91FC0A91237}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
