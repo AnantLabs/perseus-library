@@ -2,7 +2,7 @@
 using System.Reflection;
 
 namespace Perseus.Plugins {
-    class AssemblyInfo {
+    public class AssemblyInfo {
         Assembly _Assembly;
 
         public AssemblyInfo(Assembly assembly) {

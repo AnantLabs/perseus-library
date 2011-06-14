@@ -16,13 +16,32 @@ namespace Perseus.Scripting.Lua {
             if (loadPerseusLibrary) {
                 this._Lib = new LuaLibrary(this._Lua);
 
-                Assembly assembly = Assembly.GetExecutingAssembly();
-                StreamReader sr = new StreamReader(
-                    assembly.GetManifestResourceStream("Perseus.Scripting.Lua.perseus.lua")
-                );
+                string lua;
 
-                if (sr == null) { throw new Exception("Could not load perseus.lua"); }
-                this.DoString(sr.ReadToEnd() + " p = perseus");
+                // If a perseus.file exists in the assembly directory, use it instead of embeded one
+                string luaFile = Assembly.GetExecutingAssembly().CodeBase;
+                // Remove file:/// since File.Exists does not seem to support it
+                if (luaFile.StartsWith("file:///", StringComparison.Ordinal)) {
+                    luaFile = luaFile.Substring(8);
+                }
+                luaFile = Path.GetDirectoryName(luaFile) +
+                    Path.DirectorySeparatorChar + 
+                    "perseus.lua";
+                
+                if (File.Exists(luaFile)) {
+                    lua = File.ReadAllText(luaFile);
+                }
+                else {
+                    Assembly assembly = Assembly.GetExecutingAssembly();
+                    StreamReader sr = new StreamReader(
+                        assembly.GetManifestResourceStream("Perseus.Scripting.Lua.perseus.lua")
+                    );
+
+                    if (sr == null) { throw new Exception("Could not load perseus.lua"); }
+
+                    lua = sr.ReadToEnd();
+                }
+                this.DoString(lua + " p = perseus");
                 
                 this.DoString("if perseus.clipboard == nil then perseus.clipboard = {} end");
                 this.RegisterFunction("perseus.clipboard.settext", this._Lib, "ClipboardSetText");
@@ -126,41 +145,112 @@ namespace Perseus.Scripting.Lua {
         public bool IOFileExists(string path) {
             return File.Exists(path);
         }
-        public void IOFileDelete(string path) {
-            File.Delete(path);
+        public bool IOFileDelete(string path) {
+            if (File.Exists(path)) {
+                try {
+                    File.Delete(path);
+                    return File.Exists(path);
+                }
+                catch {
+                    return false;
+                }
+            }
+            return false;
         }
-        public void IOFileCopy(string source, string dest) {
-            File.Copy(source, dest);
+        public bool IOFileCopy(string source, string dest) {
+            try {
+                File.Copy(source, dest);
+            }
+            catch {
+                return false;
+            }
+            return true;
         }
-        public void IOFileMove(string source, string dest) {
-            File.Move(source, dest);
+        public bool IOFileMove(string source, string dest) {
+            try {
+                File.Move(source, dest);
+            }
+            catch {
+                return false;
+            }
+            return true;
         }
         public string IOFileReadAllText(string path) {
             return File.ReadAllText(path, System.Text.Encoding.UTF8);
         }
-        public void IOFileWriteAllText(string path, string contents) {
-            File.WriteAllText(path, contents, System.Text.Encoding.UTF8);
+        public bool IOFileWriteAllText(string path, string contents) {
+            try {
+                File.WriteAllText(path, contents, System.Text.Encoding.UTF8);                
+            }
+            catch {
+                return false;
+            }
+            return true;
         }
 
         public string IOPathExtension(string path) {
-            return Path.GetExtension(path);
+            try {
+                string extension = Path.GetExtension(path);
+                if (extension == null) {
+                    return string.Empty;
+                }
+
+                return extension;
+            }
+            catch {
+                return string.Empty;
+            }
         }
-        public string IOPathFileName(string path) {            
-            return Path.GetFileName(path);
+        public string IOPathFileName(string path) {                        
+            try {
+                string fileName = Path.GetFileName(path);
+                if (fileName == null) {
+                    return string.Empty;
+                }
+
+                return fileName;
+            }
+            catch {
+                return string.Empty;
+            }
         }
-        public string IOPathFileNameWithoutExtension(string path) {
-            return Path.GetFileNameWithoutExtension(path);
+        public string IOPathFileNameWithoutExtension(string path) {            
+            try {
+                string baseName = Path.GetFileNameWithoutExtension(path);
+                if (baseName == null) {
+                    return string.Empty;
+                }
+
+                return baseName;
+            }
+            catch {
+                return string.Empty;
+            }
         }
 
         public bool IODirectoryCreate(string path) {
-            DirectoryInfo di = Directory.CreateDirectory(path);
-            return di.Exists;
+            try {
+                DirectoryInfo di = Directory.CreateDirectory(path);
+                return di.Exists;
+            }
+            catch {
+                return false;
+            }
         }
         public bool IODirectoryExists(string path) {
             return Directory.Exists(path);
         }
-        public void IODirectoryDelete(string path) {
-            Directory.Delete(path);
+        public bool IODirectoryDelete(string path) {
+            if (Directory.Exists(path)) {
+                try {
+                    Directory.Delete(path);
+                    return Directory.Exists(path);
+                }
+                catch {
+                    return false;
+                }
+            }
+            return false;
         }
         public void IODirectoryGetFiles(string path) {
             string[] files = Directory.GetFiles(path);

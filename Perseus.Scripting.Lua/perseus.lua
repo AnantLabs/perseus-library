@@ -22,7 +22,7 @@ perseus.string.split = function (s, delim, count)
 			table.insert(t, string.sub(s, start, pos[1] - 1))
 			start = pos[1] + #pos[2]
 		else
-			-- Add remaining
+			-- add remaining
 			table.insert(t, string.sub(s, start))
 			break
 		end
@@ -44,9 +44,10 @@ perseus.string.findany = function (s, patterns, init, plain)
 	
 	for i = 2, #patterns do
 		local pos = string.find(s, patterns[i], init, plain)
-		if pos then
+		if pos ~= nil then
 			if pos_current == nil or pos < pos_current then
 				pos_current = pos
+				value = patterns[i]
 			-- in cases where 1 delimiter starts with another delimiter, choose the longer one	
 			elseif pos == pos_current and #patterns[i] > #value then
 				value = patterns[i]
@@ -84,6 +85,16 @@ end
 -- returns true if the string ends with the specified value; otherwise false
 perseus.string.endswith = function(s, with)
 	return (string.sub(s, -#with) == with)
+end
+
+perseus.string.lpad = function(s, len, char)
+    if char == nil then char = " " end
+    return s .. string.rep(char, len - #s)
+end
+
+perseus.string.rpad = function(s, len, char)
+    if char == nil then char = " " end
+    return string.rep(char, len - #s) .. s
 end
 
 perseus.table = {}
