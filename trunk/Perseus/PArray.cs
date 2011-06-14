@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 
 namespace Perseus {
-    public class PArray {
+    public static class PArray {
         public static void ResizeArrayTo<T>(ref T[] a, int size) {
             Array.Resize<T>(ref a, size);
         }
