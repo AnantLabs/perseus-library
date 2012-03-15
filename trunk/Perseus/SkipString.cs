@@ -104,8 +104,9 @@ namespace Perseus {
             this._IsInit = false;
         }
         public void RemoveSkipItem(string start, string end) {
+            // TODO: check all ends, only remove single end or entire if 1 end
             for (int i = this._SkipItems.GetUpperBound(0); i >= 0; i--) {
-                if (_SkipItems[i].Start == start && this._SkipItems[i].Start == end) {
+                if (_SkipItems[i].Start.Is(start) && this._SkipItems[i].End.Is(end)) {
                     PArray.RemoveItem<SkipItem>(ref this._SkipItems, i);
                     this._IsInit = false;
                 }

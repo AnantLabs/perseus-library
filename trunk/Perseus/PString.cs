@@ -463,7 +463,7 @@ namespace Perseus {
         /// <param name="Separator">A <seealso cref=System.String"/> to add inbetween each joined string.</param>
         /// <param name="Count">The number of times to join strings.</param>
         /// <returns>A <seealso cref=System.String"/> of Count elements of the specified <seealso cref="System.Array"/> joined together.</returns>
-        public static string Join(this string[] s, string separator, int startIndex, int count) {
+        public static string Join(this string[] s, string separator, int startIndex, int count) {            
             return String.Join(separator, s, startIndex, s.Length - startIndex);
             //string tmp = string.Empty;
             //int n = (count < 1 ? Math.Min(count, s.GetUpperBound(0)) : s.GetUpperBound(0));

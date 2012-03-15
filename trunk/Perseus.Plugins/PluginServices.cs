@@ -67,8 +67,10 @@ namespace Perseus.Plugins {
                                 if (instance is T) {
                                     PluginInstance<T> plugin = new PluginInstance<T>(
                                         (T)instance,
+                                        pluginAssembly,
                                         file
                                     );
+
                                     this.Plugins.Add(plugin);
                                 }
                             }
@@ -94,21 +96,21 @@ namespace Perseus.Plugins {
         }
         #endregion
 
-        public PluginInstance<T> this[string fullName] {
+        public PluginInstance<T> this[string name] {
             get {
                 // In situations where the instance class is the same as the last 
                 // namespace we will not require the last namespace.
-                int pos = fullName.LastIndexOf('.');
+                int pos = name.LastIndexOf('.');
                 string last = string.Empty;
                 if (pos >= 0) {
-                    last = fullName.Substring(pos);
-                    if (fullName.EndsWith(last + last)) {
-                        fullName = fullName.Substring(0, pos);
+                    last = name.Substring(pos);
+                    if (name.EndsWith(last + last)) {
+                        name = name.Substring(0, pos);
                     }
                 }
 
                 var plugin = from p in this.Plugins                             
-                             where p.FullName.Is(fullName) || p.FullName.Is(fullName + last)
+                             where p.FullName.Is(name) || p.FullName.Is(name + last) || p.Name.Is(name) || p.Instance.PluginInfo.Name.Is(name)
                              select p;
 
                 if (plugin.Count() > 0) {
@@ -118,14 +120,12 @@ namespace Perseus.Plugins {
                 return null;
             }
         }
-        public PluginInstance<T> this[Type type, string name] {
+        public PluginInstance<T> this[string name, Type type] {
             get {
-                var plugin = from p in this.Plugins
-                             where type.IsInstanceOfType(p.Instance) && p.Name == name
-                             select p;
-
-                if (plugin.Count() > 0) {
-                    return plugin.First();
+                var p = this[name];
+                
+                if (p != null && type.IsInstanceOfType(p.Instance)) {
+                    return p;
                 }
                 
                 return null;

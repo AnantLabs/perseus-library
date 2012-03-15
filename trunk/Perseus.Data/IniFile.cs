@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Windows;
 
 using Perseus;
@@ -88,22 +89,25 @@ namespace Perseus.Data {
             this.Save(this.FileName);
         }
         public void Save(string fileName) {
-            if (fileName != string.Empty) {
+            if (fileName.IsNotEmpty()) {
                 using (StreamWriter sw = new StreamWriter(fileName)) {
-                    foreach (string section in this.Keys) {
-                        sw.WriteLine("[" + section + "]");
-                        foreach (string key in this[section].Keys) {
-                            string[] lines = this[section][key].Trim().Split(Environment.NewLine);
-
-                            for (int i = 1; i < lines.Length; ++i) {
-                                lines[i] = " " + lines[i];
-                            }
-                            
-                            sw.WriteLine(key + " = " + string.Join(Environment.NewLine, lines));
-                        }
-                        sw.WriteLine();
-                    }
+                    this.Save(sw);                    
                 }
+            }
+        }
+        public void Save(TextWriter output) {
+            foreach (string section in this.Keys) {
+                output.WriteLine("[" + section + "]");
+                foreach (string key in this[section].Keys) {
+                    string[] lines = this[section][key].Trim().Split(Environment.NewLine);
+
+                    for (int i = 1; i < lines.Length; ++i) {
+                        lines[i] = " " + lines[i];
+                    }
+
+                    output.WriteLine(key + " = " + string.Join(Environment.NewLine, lines));
+                }
+                output.WriteLine();
             }
         }
 
@@ -271,6 +275,20 @@ namespace Perseus.Data {
                     resource
                 )
             )) {
+                iniFile.Load(sr);
+            }
+
+            return iniFile;
+        }
+        public static IniFile FromString(string data) {
+            return IniFile.FromString(data, Encoding.UTF8);
+        }
+        public static IniFile FromString(string data, Encoding encoding) {
+            IniFile iniFile = new IniFile();
+
+            MemoryStream stream = new MemoryStream(encoding.GetBytes(data));
+
+            using (StreamReader sr = new StreamReader(stream)) {
                 iniFile.Load(sr);
             }
 

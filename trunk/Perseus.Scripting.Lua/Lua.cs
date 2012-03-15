@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.IO;
 using System.Reflection;
+using System.Text;
 
 using LuaInterface;
+
+using Perseus;
 
 namespace Perseus.Scripting.Lua {
     public class Lua {
@@ -12,7 +16,7 @@ namespace Perseus.Scripting.Lua {
         public Lua() : this (true) { }
         public Lua(bool loadPerseusLibrary) {           
             this._Lua = new LuaInterface.Lua();
-            
+           
             if (loadPerseusLibrary) {
                 this._Lib = new LuaLibrary(this._Lua);
 
@@ -51,7 +55,7 @@ namespace Perseus.Scripting.Lua {
                 this.DoString("if perseus.io == nil then perseus.io = {} end");
                 
                 this.DoString("if perseus.io.path == nil then perseus.io.path = {} end");
-                this.DoString("perseus.io.path.separator = [[" + Path.DirectorySeparatorChar + "]]");
+                this["perseus.io.path.separator"] = Path.DirectorySeparatorChar;
                 this.RegisterFunction("perseus.io.path.extension", this._Lib, "IOPathExtension");
                 this.RegisterFunction("perseus.io.path.filename", this._Lib, "IOPathFileName");
                 this.RegisterFunction("perseus.io.path.basename", this._Lib, "IOPathFileNameWithoutExtension");
@@ -72,8 +76,38 @@ namespace Perseus.Scripting.Lua {
                 this.RegisterFunction("perseus.io.dir._getdirs", this._Lib, "IODirectoryGetDirectories");                
             }   
         }
-        ~Lua() {
+        ~Lua() {            
             this._Lua.Dispose();
+        }
+
+        public object this[string fullPath] {
+            get {
+                return this._Lua[fullPath];
+            }
+            set {
+                this.EnsurePath(fullPath);
+                if (value is IList) {
+                    var list = value as IList;
+                    this._Lua.NewTable(fullPath);
+                    var table = this._Lua[fullPath] as LuaTable;
+
+                    for (int i = 0; i < list.Count; ++i) {
+                        table[i] = list[i];
+                    }
+                }
+                else if (value is IDictionary) {
+                    var dict = value as IDictionary;
+                    this._Lua.NewTable(fullPath);
+                    var table = this._Lua[fullPath] as LuaTable;
+
+                    foreach(object o in dict.Keys) {
+                        table[o] = dict[o];
+                    }
+                }
+                else {
+                    this._Lua[fullPath] = value;
+                }
+            }
         }
 
         public object LoadFile(string fileName) {
@@ -88,8 +122,8 @@ namespace Perseus.Scripting.Lua {
             return null;
         }
 
-        public bool IsSet(string name) {
-            return (bool)this._Lua.DoString("return (" + name + " ~= nil);")[0];
+        public bool IsSet(string path) {
+            return (bool)this._Lua.DoString("return (" + path + " ~= nil);")[0];
         }
 
         public object CallFunction(string name, params object[] args) {
@@ -107,7 +141,7 @@ namespace Perseus.Scripting.Lua {
 
             return (LuaTable)o;
         }
-
+        
         public object DoString(string chunk) {
             var result = this._Lua.DoString(chunk);
 
@@ -121,6 +155,49 @@ namespace Perseus.Scripting.Lua {
         public LuaFunction RegisterFunction(string path, object target, string function) {
             Type t = target.GetType();
             return this._Lua.RegisterFunction(path, target, t.GetMethod(function));
+        }
+
+        public static string EscapeString(string s) {
+            var sb = new StringBuilder(s);
+            sb.Replace("\a", "\\a");
+            sb.Replace("\b", "\\b");
+            sb.Replace("\f", "\\f");
+            sb.Replace("\n", "\\n");
+            sb.Replace("\r", "\\r");
+            sb.Replace("\t", "\\t");
+            sb.Replace("\v", "\\v");
+            sb.Replace("\\", "\\\\");
+            sb.Replace("\"", "\\\"");
+            sb.Replace("'", "\\'");
+            sb.Replace("[", "\\[");
+            sb.Replace("]", "\\]");
+
+            return sb.ToString();
+        }
+
+        private void EnsurePath(string path) {
+            if (path.Trim().IsEmpty()) {
+                return;
+            }
+
+            string[] parts = path.Split(".");
+            string newPath = string.Empty;
+
+            // We don't want the last one to be set to a table
+            int len = parts.Length - 1;
+
+            for (int i = 0; i < len; ++i) {
+                if (newPath.IsEmpty()) {
+                    newPath = parts[i];
+                }
+                else {
+                    newPath += "." + parts[i];
+                }
+
+                if (!this.IsSet(newPath)) {
+                    this._Lua.NewTable(newPath);
+                }
+            }
         }
     }
     internal class LuaLibrary {
@@ -255,17 +332,17 @@ namespace Perseus.Scripting.Lua {
         public void IODirectoryGetFiles(string path) {
             string[] files = Directory.GetFiles(path);
 
-            this._Lua.DoString("p._tabledata = {}");
+            this._Lua.NewTable("perseus._tabledata");
             for (int i = 0; i < files.Length; i++) {
-                this._Lua.DoString("p._tabledata[" + (i + 1).ToString() + "] = [[" + files[i] + "]]");
+                ((LuaTable)this._Lua["perseus._tabledata"])[i + 1] = files[i];
             }
         }
         public void IODirectoryGetDirectories(string path) {
             string[] dirs = Directory.GetDirectories(path);
-
-            this._Lua.DoString("p._tabledata = {}");
+            
+            this._Lua.NewTable("perseus._tabledata");
             for (int i = 0; i < dirs.Length; i++) {
-                this._Lua.DoString("p._tabledata[" + (i + 1).ToString() + "] = [[" + dirs[i] + "]]");
+                ((LuaTable)this._Lua["perseus._tabledata"])[i + 1] = dirs[i];
             }
         }
     }   

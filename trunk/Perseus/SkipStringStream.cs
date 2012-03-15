@@ -95,12 +95,10 @@ namespace Perseus {
         public void RemoveSkipItem(int index) {
             PArray.RemoveItem<SkipItem>(ref this._SkipItems, index);
         }
-        public void RemoveSkipItem(string start, string end) {
-            throw new Exception("error comparing start with end, end is an array, check non stream");
-            // Also check all ends, only remove single end or entire if 1 end
+        public void RemoveSkipItem(string start, string end) {            
+            // TODO: check all ends, only remove single end or entire if 1 end
             for (int i = this._SkipItems.GetUpperBound(0); i >= 0; i--) {
-                if (string.Compare(_SkipItems[i].Start, start, StringComparison.Ordinal) == 0
-                    && string.Compare(_SkipItems[i].Start, end, StringComparison.Ordinal) == 0) {
+                if (this._SkipItems[i].Start.Is(start) && this._SkipItems[i].End.Is(end)) {                
                     PArray.RemoveItem<SkipItem>(ref this._SkipItems, i);
                 }
             }
