@@ -74,6 +74,8 @@
     <Compile Include="Converters.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="IniFile.cs" />
+    <Compile Include="EventList.cs" />
+    <Compile Include="ListEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
